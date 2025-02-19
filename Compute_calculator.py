@@ -29,7 +29,7 @@ app=Flask(__name__)
 process_status = {}
 
 
-index_file = "data/index.json"
+index_file = "index.json"
 
 
 
@@ -49,7 +49,7 @@ body = "Please find the attached file for the results of the computation."
 file_path = "output_results.xlsx"
 
 
-with open('data/knowledge_base.json', 'r') as kb_file:
+with open('knowledge_base.json', 'r') as kb_file:
     knowledge_base = json.load(kb_file)
 
 os_mapping = {
