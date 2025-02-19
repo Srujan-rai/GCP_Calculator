@@ -29,7 +29,7 @@ app=Flask(__name__)
 process_status = {}
 
 
-index_file = "index.json"
+index_file = "data/index.json"
 
 
 
@@ -49,7 +49,7 @@ body = "Please find the attached file for the results of the computation."
 file_path = "output_results.xlsx"
 
 
-with open('knowledge_base.json', 'r') as kb_file:
+with open('data/knowledge_base.json', 'r') as kb_file:
     knowledge_base = json.load(kb_file)
 
 os_mapping = {
@@ -697,7 +697,11 @@ def add_estimate(driver,actions):
     actions.send_keys(Keys.ENTER).perform()
     
         
-
+def scrape_machine_type(driver,actions):
+    time.sleep(0.6)
+    element = driver.find_element(By.CLASS_NAME, "D3Zlgc.MyvX5d.D0aEmf")
+    print("Extracted Content:", element.text)
+    return element.text
 
 
 #=============================================================================================#
@@ -751,7 +755,7 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
                 ram_limits = {
                 'N1': 13,
                 'N2': 16,
-                'N2D': 16,
+                'N2D': 32,
                 'N4': 16,
                 'E2': 16
                 }
@@ -793,13 +797,14 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
     current_url = driver.current_url
     
     price=get_price_with_js(driver)
+    machine_type_data=scrape_machine_type(driver,actions)
     
     print(price,current_url)
     
     driver.quit()
     print("✅ ondemand pricing done")
     
-    return current_url, price
+    return current_url, price,machine_type_data
     
     
     
@@ -858,7 +863,7 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
                 ram_limits = {
                 'N1': 13,
                 'N2': 16,
-                'N2D': 16,
+                'N2D': 32,
                 'N4': 16,
                 'E2': 16
                 }
@@ -902,12 +907,13 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
     
     price=get_price_with_js(driver)
     
+    machine_type_data=scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
     print("✅ sud pricing done")
     
-    return current_url, price   
+    return current_url, price, machine_type_data
     
     
 def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
@@ -963,7 +969,7 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
                 ram_limits = {
                 'N1': 13,
                 'N2': 16,
-                'N2D': 16,
+                'N2D': 32,
                 'N4': 16,
                 'E2': 16
                 }
@@ -1007,13 +1013,13 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
     current_url = driver.current_url
     
     price=get_price_with_js(driver)
-    
+    machine_type_data=scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
     print("✅ one year pricing done")
     
-    return current_url, price
+    return current_url, price , machine_type_data
 
 def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
     print(f"Getting three year pricing: 🖥️ OS: {os_name}, 🔢 No. of Instances: {no_of_instances}, ⏳ Hours per Day: {hours_per_day}, "
@@ -1068,7 +1074,7 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
                 ram_limits = {
                 'N1': 13,
                 'N2': 16,
-                'N2D': 16,
+                'N2D': 32,
                 'N4': 16,
                 'E2': 16
                 }
@@ -1112,14 +1118,14 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
     current_url = driver.current_url
     
     price=get_price_with_js(driver)
-    
+    machine_type_data=scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
     
     print("✅ three year pricing done")
     
-    return current_url, price
+    return current_url, price , machine_type_data
 
 
 #=============================================================================================#
@@ -1195,7 +1201,7 @@ def main(sheet_url,recipient_email):
                     if  machine_class=="preemptible": #if it is less than on demand price  ///////even if it greater then 730 and (spot/premtible eny condition the price is ondemand)
                         if iteration==0:
                             print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                            row_result["On-Demand URL"], row_result["On-Demand Price"] = get_on_demand_pricing(
+                            row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= get_on_demand_pricing(
                                 os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                             )
 
@@ -1211,14 +1217,14 @@ def main(sheet_url,recipient_email):
                     if  machine_class=="regular" and hours_per_day < 730:
                         if iteration==0:
                             print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                            row_result["On-Demand URL"], row_result["On-Demand Price"] = get_on_demand_pricing(
+                            row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = get_on_demand_pricing(
                                 os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                             )
 
                         if iteration==1:
                             
                             print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                            row_result["SUD URL"], row_result["SUD Price"] = get_sud_pricing(
+                            row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_sud_pricing(
                                 os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                             )
                             
@@ -1230,7 +1236,7 @@ def main(sheet_url,recipient_email):
                     else:
                         if iteration == 0:
                             print(f"Iteration {iteration + 1}: Getting on-demand price and link")
-                            row_result["On-Demand URL"], row_result["On-Demand Price"] = get_on_demand_pricing(
+                            row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = get_on_demand_pricing(
                                 os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                             )
                         elif iteration == 1:
@@ -1241,17 +1247,17 @@ def main(sheet_url,recipient_email):
                             
                             else:
                                 print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                                row_result["SUD URL"], row_result["SUD Price"] = get_sud_pricing(
+                                row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_sud_pricing(
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
                         elif iteration == 2:
                             print(f"Iteration {iteration + 1}: Getting 1-year commitment price and link")
-                            row_result["1-Year URL"], row_result["1-Year Price"] = get_one_year_pricing(
+                            row_result["1-Year URL"], row_result["1-Year Price"],row["Machine type"] = get_one_year_pricing(
                                 os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                             )
                         elif iteration == 3:
                             print(f"Iteration {iteration + 1}: Getting 3-year commitment price and link")
-                            row_result["3-Year URL"], row_result["3-Year Price"] = get_three_year_pricing(
+                            row_result["3-Year URL"], row_result["3-Year Price"] ,row["Machine type"]= get_three_year_pricing(
                                 os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                             )
                 except Exception as e:
