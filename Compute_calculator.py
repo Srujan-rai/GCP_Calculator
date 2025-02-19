@@ -362,8 +362,9 @@ def handle_machine_family(driver,actions,machine_family_index,machine_family):
 
 
 def handle_series(driver,actions,series_index,series):
+    time.sleep(0.6)
     actions.send_keys(Keys.TAB).perform()
-    
+    time.sleep(0.6)
     actions.send_keys(Keys.ENTER).perform()
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
