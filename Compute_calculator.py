@@ -22,6 +22,7 @@ import requests
 from flask import Flask, request,jsonify
 import pyperclip
 
+pyautogui.FAILSAFE = False
 
 
 app=Flask(__name__)
