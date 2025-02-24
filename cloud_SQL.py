@@ -780,9 +780,7 @@ def main(sheet,email):
         if int(row["Avg no. of hrs"]) < 730 and int(row["No. of Instances"]) > 1:
             error_message.append("Invalid configuration: More than one instance running for less than 730 hours is not logical.")
             
-        if row["SQL Type"].lower() == "postgresql" and ((row["RAM"])<3.75 or int(row["RAM"])>624):
-            error_message.append("RAM cannot be less than 3.75 or greater then 624")
-
+        
         row["Error"] = "; ".join(error_message) if error_message else ""
         results.append(row)
         
@@ -804,9 +802,10 @@ def main(sheet,email):
     
     driver = setup_driver()
     actions = ActionChains(driver)
+    home_page(driver,actions)
     for index, row in df.iterrows():
-        if index == 0:
-            home_page(driver,actions)
+        print(index)
+        
         
         
         sud_price, sud_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),float(row["vCPUs"]),float(row["RAM"]))
@@ -825,9 +824,9 @@ def main(sheet,email):
     # Processing One-Year Pricing
     driver = setup_driver()
     actions = ActionChains(driver)
+    home_page(driver,actions)
     for index, row in df.iterrows():
-        if index == 0:
-            home_page(driver,actions)
+        
             
         if int(row["Avg no. of hrs"]) < 730:
             one_year_price, one_year_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),int(row["vCPUs"]),int(row["RAM"]))
@@ -856,11 +855,10 @@ def main(sheet,email):
     # Processing Three-Year Pricing
     driver = setup_driver()
     actions = ActionChains(driver)
-    
+    home_page(driver,actions)
     
     for index, row in df.iterrows():
-        if index == 0:
-            home_page(driver,actions)
+        
         if int(row["Avg no. of hrs"]) < 730:
             three_year_price, three_year_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),int(row["vCPUs"]),int(row["RAM"]))
             results[index]["three Year Price"] = three_year_price
