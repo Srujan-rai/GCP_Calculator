@@ -809,7 +809,7 @@ def main(sheet,email):
             home_page(driver,actions)
         
         
-        sud_price, sud_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),int(row["vCPUs"]),int(row["RAM"]))
+        sud_price, sud_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),float(row["vCPUs"]),float(row["RAM"]))
         
         results[index]["SUD Price"] = sud_price
         results[index]["SUD URL"] = sud_current_url
@@ -883,7 +883,7 @@ def main(sheet,email):
     print("✅ All pricing done and saved in pricing_summary.xlsx")
 
 
-@app.route('/calculate-cloudsql',methods=["POST"])
+@app.route('/calculate',methods=["POST"])
 def run_automation():
     sheet = request.form.get('sheet')
     email = request.form.get('email')
