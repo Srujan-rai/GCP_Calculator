@@ -879,7 +879,7 @@ def main(sheet,email):
     driver.quit()
     
     save_to_excel(results, "data/CloudSQL.xlsx")
-    send_email_with_attachment(sender_email, sender_password, email, subject, body, "CloudSQL_pricing_summary.xlsx")
+    send_email_with_attachment(sender_email, sender_password, email, subject, body, "data/CloudSQL.xlsx")
     print("✅ All pricing done and saved in pricing_summary.xlsx")
 
 
