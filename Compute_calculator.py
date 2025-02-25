@@ -863,7 +863,7 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
         if (machine_family.lower() == "general purpose" and series in ["N1", "N2", "N4", "E2", "N2D"] and not (series == "N1" and machine_type in ["f1-micro", "g1-small"])):
                 print(f"Calling handle_vcpu_and_memory Machine Family: {machine_family}, Series: {series}, Type: {machine_type}")
                 ram_limits = {
-                'N1': 13,
+                'N1': 256,
                 'N2': 16,
                 'N2D': 256,
                 'N4': 16,
@@ -969,7 +969,7 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
                 print(f"Calling handle_vcpu_and_memory Machine Family: {machine_family}, Series: {series}, Type: {machine_type}")
                 
                 ram_limits = {
-                'N1': 13,
+                'N1': 256,
                 'N2': 16,
                 'N2D': 256,
                 'N4': 16,
@@ -1074,7 +1074,7 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
                 print(f"Calling handle_vcpu_and_memory Machine Family: {machine_family}, Series: {series}, Type: {machine_type}")
                 
                 ram_limits = {
-                'N1': 13,
+                'N1': 256,
                 'N2': 16,
                 'N2D': 256,
                 'N4': 16,
