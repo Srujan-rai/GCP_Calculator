@@ -706,6 +706,56 @@ def scrape_machine_type(driver,actions):
     return element.text
 
 
+
+
+def get_memory_limit(series, ram):
+    ram_limits = {
+        'N1': {
+            2: 13, 4: 26, 6: 39, 8: 52, 10: 65, 12: 78, 14: 91, 16: 104, 18: 117, 20: 130,
+            22: 143, 24: 156, 26: 169, 28: 182, 30: 195, 32: 208, 34: 221, 36: 234, 38: 247, 40: 260,
+            42: 273, 44: 286, 46: 299, 48: 312, 50: 325, 52: 338, 54: 351, 56: 364, 58: 377, 60: 390,
+            62: 403, 64: 416, 66: 429, 68: 442, 70: 455, 72: 468, 74: 481, 76: 494, 78: 507, 80: 520,
+            82: 533, 84: 546, 86: 559, 88: 572, 90: 585, 92: 598, 94: 611, 96: 624
+        },
+        'N2': {
+            2: 8, 4: 32, 6: 48, 8: 64, 10: 80, 12: 96, 14: 112, 16: 128, 18: 144, 20: 160,
+            22: 176, 24: 192, 26: 208, 28: 224, 30: 240, 32: 256, 34: 272, 36: 288, 38: 304, 40: 320,
+            42: 336, 44: 352, 46: 368, 48: 384, 50: 400, 52: 416, 54: 432, 56: 448, 58: 464, 60: 480,
+            62: 496, 64: 512, 66: 528, 68: 544, 70: 560, 72: 576, 74: 592, 76: 608, 78: 624, 80: 640,
+            82: 656, 84: 672, 86: 688, 88: 704, 90: 720, 92: 736, 94: 752, 96: 768, 98: 784, 100: 800,
+            102: 816, 104: 832, 106: 848, 108: 864, 110: 864, 112: 864, 114: 864, 116: 864, 118: 864,
+            120: 864, 122: 864, 124: 864, 126: 864, 128: 864
+        },
+        'N2D': {
+            2: 16, 4: 32, 6: 48, 8: 64, 10: 80, 12: 96, 14: 112, 16: 128, 18: 144, 20: 160,
+            22: 176, 24: 192, 26: 208, 28: 224, 30: 240, 32: 256, 34: 272, 36: 288, 38: 304, 40: 320,
+            42: 336, 44: 352, 46: 368, 48: 384, 50: 400, 52: 416, 54: 432, 56: 448, 58: 464, 60: 480,
+            62: 496, 64: 512, 66: 528, 68: 544, 70: 560, 72: 576, 74: 592, 76: 608, 78: 624, 80: 640,
+            82: 656, 84: 672, 86: 688, 88: 704, 90: 720, 92: 736, 94: 752, 96: 768, 98: 784, 100: 800,
+            102: 816, 104: 832, 106: 848, 108: 864, 110: 880, 112: 896, 114: 896, 116: 896, 118: 896,
+            120: 896, 122: 896, 124: 896, 126: 896, 128: 896, 130: 896, 132: 896, 134: 896, 136: 896,
+            138: 896, 140: 896, 142: 896, 144: 896, 146: 896, 148: 896, 150: 896, 152: 896, 154: 896,
+            156: 896, 158: 896, 160: 896, 162: 896, 164: 896, 166: 896, 168: 896, 170: 896, 172: 896,
+            174: 896, 176: 896, 178: 896, 180: 896, 182: 896, 184: 896, 186: 896, 188: 896, 190: 896,
+            192: 896, 194: 896, 196: 896, 198: 896, 200: 896, 202: 896, 204: 896, 206: 896, 208: 896,
+            210: 896, 212: 896, 214: 896, 216: 896, 218: 896, 220: 896, 222: 896, 224: 896
+        }
+    }
+    
+    fixed_memory_limits = {
+        'N4': 16,
+        'E2': 16
+    }
+    
+    if series in fixed_memory_limits:
+        return fixed_memory_limits[series]
+
+    # Return the memory limit for the given RAM size
+    return ram_limits.get(series, {}).get(ram, float('inf'))  
+
+
+
+
 #=============================================================================================#
 def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
     print(f"Getting on demand pricing: 🖥️ OS: {os_name}, 🔢 No. of Instances: {no_of_instances}, ⏳ Hours per Day: {hours_per_day}, "
@@ -761,7 +811,10 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
                 'N4': 16,
                 'E2': 16
                 }
-                if machine_type == 'custom' and series in ram_limits and ram > ram_limits[series]:
+                
+                memory_limit = get_memory_limit(series, vCPU)
+
+                if machine_type == 'custom' and ram > memory_limit:
                     extended_mem_toggle_on(driver,actions)
                     handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
@@ -869,7 +922,10 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
                 'N4': 16,
                 'E2': 16
                 }
-                if machine_type == 'custom' and series in ram_limits and ram > ram_limits[series]:
+                
+                memory_limit = get_memory_limit(series, ram)
+
+                if machine_type == 'custom' and ram > memory_limit:
                     extended_mem_toggle_on(driver,actions)
                     handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
@@ -975,7 +1031,10 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
                 'N4': 16,
                 'E2': 16
                 }
-                if machine_type == 'custom' and series in ram_limits and ram > ram_limits[series]:
+                
+                memory_limit = get_memory_limit(series, ram)
+
+                if machine_type == 'custom' and ram > memory_limit:
                     extended_mem_toggle_on(driver,actions)
                     handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
@@ -1080,7 +1139,10 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
                 'N4': 16,
                 'E2': 16
                 }
-                if machine_type == 'custom' and series in ram_limits and ram > ram_limits[series]:
+                
+                memory_limit = get_memory_limit(series, ram)
+
+                if machine_type == 'custom' and ram > memory_limit:
                     extended_mem_toggle_on(driver,actions)
                     handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
