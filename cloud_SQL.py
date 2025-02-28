@@ -314,12 +314,29 @@ def vcpu_handle(driver,actions,vcpu,ram):
         for _ in range(3):
             actions.send_keys(Keys.TAB).perform()
             time.sleep(0.2)
+        
+        
             
         actions.send_keys(Keys.ENTER).perform()
-        time.sleep(0.6)
+        time.sleep(0.3)
         actions.send_keys(Keys.BACKSPACE).perform()
         time.sleep(0.3)
         actions.send_keys(Keys.BACKSPACE).perform()
+        time.sleep(0.3)
+        
+        actions.send_keys("1").perform()
+        
+        time.sleep(0.6)
+                
+        steps=(vcpu//2)
+        
+        for _ in range(int(steps)):
+            actions.send_keys(Keys.ARROW_UP).perform()
+            time.sleep(0.2)
+            
+        actions.send_keys(Keys.ENTER).perform()
+        
+        '''actions.send_keys(Keys.BACKSPACE).perform()
         time.sleep(0.3)
         actions.send_keys(Keys.BACKSPACE).perform()
         time.sleep(0.3)
@@ -331,7 +348,9 @@ def vcpu_handle(driver,actions,vcpu,ram):
         time.sleep(0.6)
         actions.send_keys(vcpu).perform()
         time.sleep(0.2)
-        actions.send_keys(Keys.TAB).perform()
+        actions.send_keys(Keys.TAB).perform()'''
+        
+        
         print(f"the vcpu is {vcpu}")
         time.sleep(0.6)
         
