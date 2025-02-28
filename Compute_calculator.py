@@ -173,21 +173,35 @@ def process_csv(input_file, output_file):
         df['OS with version'] = df['OS with version'].apply(
             lambda x: map_os(str(x).strip(), os_mapping) if pd.notnull(x) else x
         )
+        
+        
+    if 'Machine Family' in df.columns and (df["Machine Family"] == "Compute-optimized").any():
+        
+        if 'Series' in df.columns:
+            df['Series'] = df['Series'].fillna("C2")
 
-    if 'Machine Family' in df.columns:
-        df['Machine Family'] = df['Machine Family'].fillna("general purpose")
+        if 'Machine Type' in df.columns and 'RAM' in df.columns:
+            df['Machine Type'] = df['Machine Type'].fillna("custom") + "-" + df['RAM'].astype(str)
+            
+    
+    
+    
 
-    if 'Series' in df.columns:
-        df['Series'] = df['Series'].fillna("E2")
+    else:
+        if 'Machine Family' in df.columns:
+            df['Machine Family'] = df['Machine Family'].fillna("general purpose")
 
-    if 'Machine Type' in df.columns:
-        df['Machine Type'] = df['Machine Type'].fillna("custom")
+        if 'Series' in df.columns:
+            df['Series'] = df['Series'].fillna("E2")
 
-    columns_to_map = ["Machine Family", "Series", "Machine Type"]
+        if 'Machine Type' in df.columns:
+            df['Machine Type'] = df['Machine Type'].fillna("custom")
 
-    for column in columns_to_map:
-        if column in df.columns:
-            df[column] = df[column].apply(lambda x: map_value(str(x).strip(), knowledge_base) if pd.notnull(x) else x)
+        columns_to_map = ["Machine Family", "Series", "Machine Type"]
+
+        for column in columns_to_map:
+            if column in df.columns:
+                df[column] = df[column].apply(lambda x: map_value(str(x).strip(), knowledge_base) if pd.notnull(x) else x)
 
     
     df.to_csv(output_file, index=False)
@@ -1324,15 +1338,27 @@ def main(sheet_url,recipient_email):
                             )
 
                             if iteration==1:
-                            
-                                print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                                row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_sud_pricing(
-                                    os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
-                                )
                                 
-                                row_result["1-Year URL"], row_result["1-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
-                                row_result["3-Year URL"], row_result["3-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
-                                break
+                                if series=="C2D":
+                            
+                                    print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
+                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_on_demand_pricing(
+                                        os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
+                                    )
+                                    
+                                    row_result["1-Year URL"], row_result["1-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
+                                    row_result["3-Year URL"], row_result["3-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
+                                    break
+                                else:
+                                    print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
+                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_sud_pricing(
+                                        os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
+                                    )
+                                    
+                                    row_result["1-Year URL"], row_result["1-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
+                                    row_result["3-Year URL"], row_result["3-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
+                                    break
+                                    
                     
                     else:
                         
@@ -1361,7 +1387,7 @@ def main(sheet_url,recipient_email):
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
                             elif iteration == 1:
-                                if series=="E2":
+                                if series=="E2" or series=="C2D":
                                     print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
                                     row_result["SUD URL"], row_result["SUD Price"], row["Machine type"] = row_result["On-Demand URL"], row_result["On-Demand Price"], row["Machine type"] 
                                     
