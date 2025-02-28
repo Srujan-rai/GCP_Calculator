@@ -180,8 +180,8 @@ def process_csv(input_file, output_file):
         if 'Series' in df.columns:
             df['Series'] = df['Series'].fillna("C2")
 
-        if 'Machine Type' in df.columns and 'RAM' in df.columns:
-            df['Machine Type'] = df['Machine Type'].fillna("custom") + "-" + df['RAM'].astype(str)
+        if 'Machine Type' in df.columns and 'vCPUs' in df.columns:
+            df['Machine Type'] = df['Machine Type'].fillna("custom") + "-" + df['vCPUs'].astype(str)
             
     
     
