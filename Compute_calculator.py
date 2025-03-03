@@ -30,18 +30,18 @@ app=Flask(__name__)
 process_status = {}
 
 
-index_file = "index.json"
+index_file = "assets/index.json"
 
 
 
-input_file = "sheet.csv"  # Replace with your input file path
+input_file = "data/sheet.csv"  # Replace with your input file path
 
 
-output_file_filtered = "output.csv" 
-input_filtered_file="output.csv"
+output_file_filtered = "data/output.csv" 
+input_filtered_file="data/output.csv"
 
 
-output_file = "output_results.csv"
+output_file = "data/output_results.csv"
 
 sender_email = "srujan.int@niveussolutions.com"
 sender_password = "rmlh ikej rtmz ejme"
@@ -50,7 +50,7 @@ body = "Please find the attached file for the results of the computation."
 file_path = "output_results.xlsx"
 
 
-with open('knowledge_base.json', 'r') as kb_file:
+with open('assets/knowledge_base.json', 'r') as kb_file:
     knowledge_base = json.load(kb_file)
 
 os_mapping = {
@@ -113,7 +113,7 @@ def download_sheet(sheet_url):
             response = requests.get(csv_url)
 
             if response.status_code == 200:
-                with open("sheet.csv", "wb") as f:
+                with open("data/sheet.csv", "wb") as f:
                     f.write(response.content)
                 print("Google Sheet downloaded as sheet.csv")
                 row_count = count_rows(file_path)
@@ -1435,7 +1435,7 @@ def main(sheet_url,recipient_email):
                 "Error": str(e)
              })
 
-    output_file = "output_results.xlsx"  # Excel file extension
+    output_file = "data/output_results.xlsx"  # Excel file extension
 
     output_df = pd.DataFrame(results)
     output_df.to_excel(output_file, index=False)

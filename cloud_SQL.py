@@ -819,6 +819,7 @@ def main(sheet,email):
     
     driver = setup_driver()
     actions = ActionChains(driver)
+    time.sleep(1)
     home_page(driver, actions)
 
     for index, row in df.iterrows():
@@ -858,6 +859,7 @@ def main(sheet,email):
     # Processing One-Year Pricing
     driver = setup_driver()
     actions = ActionChains(driver)
+    time.sleep(1)
     home_page(driver,actions)
     for index, row in df.iterrows():
         
@@ -909,6 +911,7 @@ def main(sheet,email):
     # Processing Three-Year Pricing
     driver = setup_driver()
     actions = ActionChains(driver)
+    time.sleep(1)
     home_page(driver,actions)
     
     for index, row in df.iterrows():
