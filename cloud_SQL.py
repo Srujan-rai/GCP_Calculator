@@ -817,25 +817,40 @@ def main(sheet,email):
         return
 
     
-    #sud value calculation
-    
     driver = setup_driver()
     actions = ActionChains(driver)
-    home_page(driver,actions)
+    home_page(driver, actions)
+
     for index, row in df.iterrows():
-        print(index)
-        
-        
-        
-        sud_price, sud_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),float(row["vCPUs"]),float(row["RAM"]))
-        
-        results[index]["SUD Price"] = sud_price
-        results[index]["SUD URL"] = sud_current_url
-        if index < len(df) - 1:
-            add_to_estimate(driver,actions)
-            
+        try:
+            print(f"Processing row {index}...")
+
+            sud_price, sud_current_url = sud_pricing(
+            driver, actions, 
+            row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "], 
+            float(row["No. of Instances"]) if not pd.isna(row["No. of Instances"]) else 0, 
+            int(row["Avg no. of hrs"]) if not pd.isna(row["Avg no. of hrs"]) else 730, 
+            str(row["Instance Type"]), row["HA/Non-HA"], 
+            row["Disk Type"], 
+            int(row["Storage Amt"]) if not pd.isna(row["Storage Amt"]) else 0, 
+            int(row["Backup"]) if not pd.isna(row["Backup"]) else 0, 
+            float(row["vCPUs"]) if not pd.isna(row["vCPUs"]) else 0, 
+            float(row["RAM"]) if not pd.isna(row["RAM"]) else 0
+        )
+
+            results[index] = {
+                "SUD Price": sud_price,
+                "SUD URL": sud_current_url
+            }
+
+            if index < len(df) - 1:
+                add_to_estimate(driver, actions)
+
+        except Exception as e:
+            print(f"Error at index {index}: {e}")
+            continue  # Prevents crashing; moves to next iteration
+
     driver.quit()
-    
     
     
     
@@ -848,7 +863,17 @@ def main(sheet,email):
         
             
         if int(row["Avg no. of hrs"]) < 730:
-            one_year_price, one_year_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),float(row["vCPUs"]),float(row["RAM"]))
+            one_year_price, one_year_current_url = sud_pricing(driver, actions, 
+            row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "], 
+            float(row["No. of Instances"]) if not pd.isna(row["No. of Instances"]) else 0, 
+            int(row["Avg no. of hrs"]) if not pd.isna(row["Avg no. of hrs"]) else 730, 
+            str(row["Instance Type"]), row["HA/Non-HA"], 
+            row["Disk Type"], 
+            int(row["Storage Amt"]) if not pd.isna(row["Storage Amt"]) else 0, 
+            int(row["Backup"]) if not pd.isna(row["Backup"]) else 0, 
+            float(row["vCPUs"]) if not pd.isna(row["vCPUs"]) else 0, 
+            float(row["RAM"]) if not pd.isna(row["RAM"]) else 0
+        )
             results[index]["One Year Price"] = one_year_price
             results[index]["One Year URL"] = one_year_current_url
             
@@ -856,7 +881,17 @@ def main(sheet,email):
             
             
         else:
-            one_year_price, one_year_current_url = one_year_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),float(row["vCPUs"]),float(row["RAM"]))
+            one_year_price, one_year_current_url = one_year_pricing(driver, actions, 
+            row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "], 
+            float(row["No. of Instances"]) if not pd.isna(row["No. of Instances"]) else 0, 
+            int(row["Avg no. of hrs"]) if not pd.isna(row["Avg no. of hrs"]) else 730, 
+            str(row["Instance Type"]), row["HA/Non-HA"], 
+            row["Disk Type"], 
+            int(row["Storage Amt"]) if not pd.isna(row["Storage Amt"]) else 0, 
+            int(row["Backup"]) if not pd.isna(row["Backup"]) else 0, 
+            float(row["vCPUs"]) if not pd.isna(row["vCPUs"]) else 0, 
+            float(row["RAM"]) if not pd.isna(row["RAM"]) else 0
+        )
             results[index]["One Year Price"] = one_year_price
             results[index]["One Year URL"] = one_year_current_url
         
@@ -879,7 +914,17 @@ def main(sheet,email):
     for index, row in df.iterrows():
         
         if int(row["Avg no. of hrs"]) < 730:
-            three_year_price, three_year_current_url = sud_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),float(row["vCPUs"]),float(row["RAM"]))
+            three_year_price, three_year_current_url = sud_pricing(driver, actions, 
+            row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "], 
+            float(row["No. of Instances"]) if not pd.isna(row["No. of Instances"]) else 0, 
+            int(row["Avg no. of hrs"]) if not pd.isna(row["Avg no. of hrs"]) else 730, 
+            str(row["Instance Type"]), row["HA/Non-HA"], 
+            row["Disk Type"], 
+            int(row["Storage Amt"]) if not pd.isna(row["Storage Amt"]) else 0, 
+            int(row["Backup"]) if not pd.isna(row["Backup"]) else 0, 
+            float(row["vCPUs"]) if not pd.isna(row["vCPUs"]) else 0, 
+            float(row["RAM"]) if not pd.isna(row["RAM"]) else 0
+        )
             results[index]["three Year Price"] = three_year_price
             results[index]["three Year URL"] = three_year_current_url
             
@@ -887,7 +932,17 @@ def main(sheet,email):
             
             
         else:
-            three_year_price, three_year_current_url = three_year_pricing(driver, actions, row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "],float(row["No. of Instances"]), int(row["Avg no. of hrs"]), str(row["Instance Type"]),row["HA/Non-HA"], row["Disk Type"], int(row["Storage Amt"]),int(row["Backup"]),float(row["vCPUs"]),float(row["RAM"]))
+            three_year_price, three_year_current_url = three_year_pricing(driver, actions, 
+            row["SQL Type"], row["Datacenter Location"], row["Cloud SQL "], 
+            float(row["No. of Instances"]) if not pd.isna(row["No. of Instances"]) else 0, 
+            int(row["Avg no. of hrs"]) if not pd.isna(row["Avg no. of hrs"]) else 730, 
+            str(row["Instance Type"]), row["HA/Non-HA"], 
+            row["Disk Type"], 
+            int(row["Storage Amt"]) if not pd.isna(row["Storage Amt"]) else 0, 
+            int(row["Backup"]) if not pd.isna(row["Backup"]) else 0, 
+            float(row["vCPUs"]) if not pd.isna(row["vCPUs"]) else 0, 
+            float(row["RAM"]) if not pd.isna(row["RAM"]) else 0
+        )
             results[index]["three Year Price"] = three_year_price
             results[index]["three Year URL"] = three_year_current_url
             
