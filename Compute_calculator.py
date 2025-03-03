@@ -1435,7 +1435,7 @@ def main(sheet_url,recipient_email):
                 "Error": str(e)
              })
 
-    output_file = "data/output_results.xlsx"  # Excel file extension
+    output_file = "data/ComputeEngine.xlsx"  # Excel file extension
 
     output_df = pd.DataFrame(results)
     output_df.to_excel(output_file, index=False)

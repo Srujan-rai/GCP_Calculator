@@ -719,7 +719,7 @@ def download_sheet(sheet_url):
             response = requests.get(csv_url)
 
             if response.status_code == 200:
-                with open("cloudSQL_input_sheet.csv", "wb") as f:
+                with open("data/cloudSQL_input_sheet.csv", "wb") as f:
                     f.write(response.content)
                 print("Google Sheet downloaded as cloudSQL_input_sheet.csv")
             else:
@@ -779,7 +779,7 @@ def main(sheet,email):
     
     download_sheet(sheet)
     
-    file_path = "cloudSQL_input_sheet.csv"
+    file_path = "data/cloudSQL_input_sheet.csv"
     
     
     df = read_input_values(file_path)
