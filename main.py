@@ -422,7 +422,8 @@ def compute_handle_machine_type(driver,actions,machine_type,machine_type_index):
     
     print("✅ machine type selected")
     
-def compute_extended_mem_toggle_on(driver,actions):
+def compute_extended_mem_toggle_on(driver,actions,vCPU):
+    
     time.sleep(0.6)
     
     pyautogui.hotkey('ctrl', 'f')
@@ -836,7 +837,7 @@ def compute_get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machi
                 memory_limit = compute_get_memory_limit(series, vCPU)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    compute_extended_mem_toggle_on(driver,actions)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
@@ -947,7 +948,7 @@ def compute_get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_fam
                 memory_limit = compute_get_memory_limit(series, ram)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    compute_extended_mem_toggle_on(driver,actions)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
@@ -1056,7 +1057,7 @@ def compute_get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine
                 memory_limit = compute_get_memory_limit(series, ram)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    compute_extended_mem_toggle_on(driver,actions)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
@@ -1164,7 +1165,7 @@ def  compute_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_
                 memory_limit = compute_get_memory_limit(series, ram)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    compute_extended_mem_toggle_on(driver,actions)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
                     compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
@@ -2279,7 +2280,7 @@ def cloud_sql_main(sheet):
         results.append(row)
         
     df = pd.DataFrame(results)
-    cloud_sql_save_to_excel(df, "processed_data.xlsx")
+    cloud_sql_save_to_excel(df, "data/processed_data.xlsx")
     
     if df["Error"].str.contains("Missing required values|Storage Amt must be greater than 10.74").any():
         print("❌ Errors found in some rows. Check 'processed_data.xlsx' for details.")

@@ -725,8 +725,11 @@ def scrape_machine_type(driver,actions):
     print("Extracted Content:", element.text)
     return element.text
 
-
-
+def scrape_custom_machine_type(driver,actions):
+    time.sleep(0.6)
+    element = driver.find_element(By.CLASS_NAME, "HY0Uh")
+    print("Extracted Content:", element.text)
+    return element.text
 
 def get_memory_limit(series, ram):
     ram_limits = {
@@ -872,7 +875,10 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
     current_url = driver.current_url
     
     price=get_price_with_js(driver)
-    machine_type_data=scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+       machine_type_data= scrape_custom_machine_type(driver,actions)
+    else:
+        machine_type_data=scrape_machine_type(driver,actions)
     
     print(price,current_url)
     
@@ -985,7 +991,10 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
     
     price=get_price_with_js(driver)
     
-    machine_type_data=scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+           machine_type_data= scrape_custom_machine_type(driver,actions)
+    else:
+        machine_type_data=scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
@@ -1094,7 +1103,11 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
     current_url = driver.current_url
     
     price=get_price_with_js(driver)
-    machine_type_data=scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+           machine_type_data= scrape_custom_machine_type(driver,actions)
+    else:
+      machine_type_data=scrape_machine_type(driver,actions)
+     
     print(price,current_url)
     
     driver.quit()
@@ -1202,7 +1215,10 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
     current_url = driver.current_url
     
     price=get_price_with_js(driver)
-    machine_type_data=scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+       machine_type_data= scrape_custom_machine_type(driver,actions)
+    else:
+       machine_type_data=scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
@@ -1368,25 +1384,7 @@ def main(sheet_url,recipient_email):
                     
                     else:
                         
-                        if series=="E2":
-                            if iteration==0:
-                                print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= get_on_demand_pricing(
-                                    os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
-                                )
-
-                            if iteration==1:
-                                
-                                print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                                row_result["SUD URL"], row_result["SUD Price"], row["Machine type"] = row_result["On-Demand URL"], row_result["On-Demand Price"], row["Machine type"]
-                                
-                                row_result["1-Year URL"], row_result["1-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
-                                row_result["3-Year URL"], row_result["3-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
-                                break
-                            
                         
-                        
-                        else:
                             if iteration == 0:
                                 print(f"Iteration {iteration + 1}: Getting on-demand price and link")
                                 row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = get_on_demand_pricing(
