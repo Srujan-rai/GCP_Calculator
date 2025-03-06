@@ -727,7 +727,11 @@ def compute_scrape_machine_type(driver,actions):
     print("Extracted Content:", element.text)
     return element.text
 
-
+def compute_scrape_custom_machine_type(driver,actions):
+    time.sleep(0.6)
+    element = driver.find_element(By.CLASS_NAME, "HY0Uh")
+    print("Extracted Content:", element.text)
+    return element.text
 
 
 def compute_get_memory_limit(series, ram):
@@ -874,7 +878,10 @@ def compute_get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machi
     current_url = driver.current_url
     
     price=compute_get_price_with_js(driver)
-    machine_type_data=compute_scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
+    else:
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     
     print(price,current_url)
     
@@ -987,7 +994,10 @@ def compute_get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_fam
     
     price=compute_get_price_with_js(driver)
     
-    machine_type_data=compute_scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
+    else:
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
@@ -1096,7 +1106,10 @@ def compute_get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine
     current_url = driver.current_url
     
     price=compute_get_price_with_js(driver)
-    machine_type_data=compute_scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
+    else:
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
@@ -1204,7 +1217,10 @@ def  compute_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_
     current_url = driver.current_url
     
     price=compute_get_price_with_js(driver)
-    machine_type_data=compute_scrape_machine_type(driver,actions)
+    if machine_type=='custom':
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
+    else:
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
