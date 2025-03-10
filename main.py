@@ -70,6 +70,14 @@ os_mapping = {
     r"sles": "Paid: SLES"
 }
 
+
+def compute_sql_save_to_excel(data, filename):
+    try:
+        df = pd.DataFrame(data)
+        df.to_excel(filename, index=False)
+    except Exception as e:
+        print(f"Error saving to Excel: {e}")
+
 def compute_map_os(value, os_mapping):
     """
     Matches an OS string against the predefined mapping.
@@ -1237,7 +1245,7 @@ def compute_main(sheet_url):
     compute_download_sheet(sheet_url)
     df=pd.read_csv("data/sheet.csv")
     if df.shape[0] == 0 or df.dropna(how='all').shape[0] == 0:
-        cloud_sql_save_to_excel(pd.DataFrame(), "data/ComputeEngine.xlsx")  # Save an empty file
+        compute_sql_save_to_excel(pd.DataFrame(), "data/ComputeEngine.xlsx")  # Save an empty file
         print("⚠ The input sheet contains only headers or is completely empty. Exiting without processing.")
         return
     compute_process_csv(input_file, output_file_filtered)
@@ -2576,7 +2584,11 @@ def run_automation():
     google_sheet_url = upload_xlsx_to_google_drive(emails, service_account_file, merged_file)
     print(google_sheet_url)
     print("all process completed sucessfully")
+    os.remove("data/ComputeEngine.xlsx")
+    os.remove("data/CloudSQL.xlsx")
+    os.remove(merged_file)
     
+        
     return f"process completed sucessfully,google sheet url {google_sheet_url}"
 
 

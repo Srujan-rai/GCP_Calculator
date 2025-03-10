@@ -47,7 +47,7 @@ sender_email = "srujan.int@niveussolutions.com"
 sender_password = "rmlh ikej rtmz ejme"
 subject = "Compute Calculation Results"
 body = "Please find the attached file for the results of the computation."
-file_path = "output_results.xlsx"
+file_path = "data/output_results.xlsx"
 
 
 with open('assets/knowledge_base.json', 'r') as kb_file:
@@ -70,7 +70,15 @@ os_mapping = {
     r"sles": "Paid: SLES"
 }
 
-def map_os(value, os_mapping):
+
+def compute_sql_save_to_excel(data, filename):
+    try:
+        df = pd.DataFrame(data)
+        df.to_excel(filename, index=False)
+    except Exception as e:
+        print(f"Error saving to Excel: {e}")
+
+def compute_map_os(value, os_mapping):
     """
     Matches an OS string against the predefined mapping.
 
@@ -90,6 +98,7 @@ def map_os(value, os_mapping):
     
     if value.lower()=="win":
         return "Paid: Windows Server"
+    
     else:
         value = value.lower().strip()  # Normalize case and remove extra spaces
 
@@ -102,7 +111,7 @@ def map_os(value, os_mapping):
 
 
 
-def extract_sheet_id(sheet_url):
+def compute_extract_sheet_id(sheet_url):
     pattern = r"https://docs\.google\.com/spreadsheets/d/([a-zA-Z0-9-_]+)"
     match = re.search(pattern, sheet_url)
     if match:
@@ -110,10 +119,10 @@ def extract_sheet_id(sheet_url):
     else:
         raise ValueError("Invalid Google Sheet URL")
 
-def download_sheet(sheet_url):
+def compute_download_sheet(sheet_url):
         try:
             print("downloading the sheet !!")
-            sheet_id = extract_sheet_id(sheet_url)
+            sheet_id = compute_extract_sheet_id(sheet_url)
             tab_name = "ComputeEngine"
             csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={tab_name}"
             response = requests.get(csv_url)
@@ -122,7 +131,7 @@ def download_sheet(sheet_url):
                 with open("data/sheet.csv", "wb") as f:
                     f.write(response.content)
                 print("Google Sheet downloaded as sheet.csv")
-                row_count = count_rows(file_path)
+                row_count = compute_count_rows(file_path)
             else:
                 print("Failed to download sheet. HTTP Status Code:", response.status_code)
         except ValueError as e:
@@ -131,7 +140,7 @@ def download_sheet(sheet_url):
             print("An error occurred:", e)
 
 
-def count_rows(file_path):
+def compute_count_rows(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             reader = csv.reader(f)
@@ -141,7 +150,7 @@ def count_rows(file_path):
         return 0
 
 
-def send_email_with_attachment(sender_email, sender_password, recipient_email, subject, body, file_path):
+def compute_send_email_with_attachment(sender_email, sender_password, recipient_email, subject, body, file_path):
     try:
         
         msg = EmailMessage()
@@ -166,18 +175,18 @@ def send_email_with_attachment(sender_email, sender_password, recipient_email, s
 
 
 
-def map_value(value, knowledge_base):
+def compute_map_value(value, knowledge_base):
     for key in knowledge_base:
         if re.search(rf"\b{re.escape(value)}\b", key, re.IGNORECASE):
             return key
     return value 
 
-def process_csv(input_file, output_file):
+def compute_process_csv(input_file, output_file):
     df = pd.read_csv(input_file)
 
     if 'OS with version' in df.columns:
         df['OS with version'] = df['OS with version'].apply(
-            lambda x: map_os(str(x).strip(), os_mapping) if pd.notnull(x) else x
+            lambda x: compute_map_os(str(x).strip(), os_mapping) if pd.notnull(x) else x
         )
         
         
@@ -207,7 +216,7 @@ def process_csv(input_file, output_file):
 
         for column in columns_to_map:
             if column in df.columns:
-                df[column] = df[column].apply(lambda x: map_value(str(x).strip(), knowledge_base) if pd.notnull(x) else x)
+                df[column] = df[column].apply(lambda x: compute_map_value(str(x).strip(), knowledge_base) if pd.notnull(x) else x)
 
     
     df.to_csv(output_file, index=False)
@@ -215,13 +224,13 @@ def process_csv(input_file, output_file):
 
 
 
-def load_index(file_path):
+def compute_load_index(file_path):
     
     with open(file_path, 'r') as file:
         return json.load(file)
 
 
-indices = load_index(index_file)
+indices = compute_load_index(index_file)
 
 
 os_mapping = {
@@ -251,7 +260,7 @@ os_options = {
 
 
 
-def get_os_index(os_name):
+def compute_get_os_index(os_name):
     """Get the index of the OS based on its name."""
     for regex, mapped_name in os_mapping.items():
         if pd.notna(os_name) and re.search(regex, os_name, re.IGNORECASE):
@@ -260,12 +269,12 @@ def get_os_index(os_name):
                     return index
     return None
 
-def get_index(variable_name, indices):
+def compute_get_index(variable_name, indices):
     
     return indices.get(variable_name, 0)
    
     
-def home_page(driver,actions):
+def compute_home_page(driver,actions):
         """Navigates to the pricing section."""
         driver.implicitly_wait(5)
         add_to_estimate_button = driver.find_element(By.XPATH, "//span[text()='Add to estimate']")
@@ -276,7 +285,7 @@ def home_page(driver,actions):
         time.sleep(2)
         print("✅ home page done")
 
-def handle_instance(driver,actions,no_of_instance,hours_per_day):
+def compute_handle_instance(driver,actions,no_of_instance,hours_per_day):
     hours_status=False
     
     for _ in range(6):
@@ -310,7 +319,7 @@ def handle_instance(driver,actions,no_of_instance,hours_per_day):
     print("Instance handled")
 
 
-def handle_hours_per_day(driver,actions,hours_per_day):
+def compute_handle_hours_per_day(driver,actions,hours_per_day):
     if hours_per_day==730:
         for _ in range(3):
             actions.send_keys(Keys.TAB).perform()
@@ -327,7 +336,7 @@ def handle_hours_per_day(driver,actions,hours_per_day):
         print("✅ Hours handled")
 
 
-def handle_os(driver,actions,os_index,os_name):
+def compute_handle_os(driver,actions,os_index,os_name):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -355,7 +364,7 @@ def handle_os(driver,actions,os_index,os_name):
     
     
     
-def handle_machine_family(driver,actions,machine_family_index,machine_family):
+def compute_handle_machine_family(driver,actions,machine_family_index,machine_family):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -382,7 +391,7 @@ def handle_machine_family(driver,actions,machine_family_index,machine_family):
     print("✅ machine family selected")
 
 
-def handle_series(driver,actions,series_index,series):
+def compute_handle_series(driver,actions,series_index,series):
     time.sleep(0.6)
     actions.send_keys(Keys.TAB).perform()
     time.sleep(0.6)
@@ -402,7 +411,7 @@ def handle_series(driver,actions,series_index,series):
     print("✅ machine series selected")
     
     
-def handle_machine_type(driver,actions,machine_type,machine_type_index):
+def compute_handle_machine_type(driver,actions,machine_type,machine_type_index):
     
     
     time.sleep(0.6)
@@ -421,7 +430,8 @@ def handle_machine_type(driver,actions,machine_type,machine_type_index):
     
     print("✅ machine type selected")
     
-def extended_mem_toggle_on(driver,actions):
+def compute_extended_mem_toggle_on(driver,actions,vCPU):
+    
     time.sleep(0.6)
     
     pyautogui.hotkey('ctrl', 'f')
@@ -440,7 +450,7 @@ def extended_mem_toggle_on(driver,actions):
     
        
  
-def handle_vcpu_and_memory(driver,actions,vCPU,ram):
+def compute_handle_vcpu_and_memory(driver,actions,vCPU,ram):
     print(vCPU)
     print(ram)
     time.sleep(0.6)
@@ -525,7 +535,7 @@ def handle_vcpu_and_memory(driver,actions,vCPU,ram):
     
     
   
-def boot_disk_type(driver,actions):
+def compute_boot_disk_type(driver,actions):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -540,7 +550,7 @@ def boot_disk_type(driver,actions):
     
     print("✅ Boot Disk Type handled")
 
-def boot_disk_capacitys(driver,actions,boot_disk_capacity):
+def compute_boot_disk_capacitys(driver,actions,boot_disk_capacity):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -568,7 +578,7 @@ def boot_disk_capacitys(driver,actions,boot_disk_capacity):
    
 
 
-def select_region(driver, actions, region):
+def compute_select_region(driver, actions, region):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -595,7 +605,7 @@ def select_region(driver, actions, region):
     print("✅ Region selected")
 
 
-def get_price_with_js(driver):
+def compute_get_price_with_js(driver):
     
     try:
         js_script = """
@@ -618,12 +628,12 @@ def get_price_with_js(driver):
         return f"An unexpected JavaScript error occurred: {str(e)}"
 
 
-def move_to_region(driver,actions,moves):
+def compute_move_to_region(driver,actions,moves):
     pass
     
 
 
-def sud_toggle_on(driver,actions):
+def compute_sud_toggle_on(driver,actions):
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
     
@@ -638,7 +648,7 @@ def sud_toggle_on(driver,actions):
     actions.send_keys(Keys.ENTER).perform()
     print("✅ Sud turned on")
 
-def one_year_selection(driver,actions):
+def compute_one_year_selection(driver,actions):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -659,7 +669,7 @@ def one_year_selection(driver,actions):
 
 
 
-def three_year_selection(driver,actions):
+def compute_three_year_selection(driver,actions):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -681,7 +691,7 @@ def three_year_selection(driver,actions):
     print("✅ three year selected")
  
  
-def handle_machine_class(driver,actions,machine_class): 
+def compute_handle_machine_class(driver,actions,machine_class): 
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -703,7 +713,7 @@ def handle_machine_class(driver,actions,machine_class):
         print("✅ machine class handled regular selected")
         pass
 
-def add_estimate(driver,actions):
+def compute_add_estimate(driver,actions):
     time.sleep(0.6)
     pyautogui.hotkey('ctrl', 'f')
     time.sleep(0.6)
@@ -719,19 +729,20 @@ def add_estimate(driver,actions):
     actions.send_keys(Keys.ENTER).perform()
     
         
-def scrape_machine_type(driver,actions):
+def compute_scrape_machine_type(driver,actions):
     time.sleep(0.6)
     element = driver.find_element(By.CLASS_NAME, "D3Zlgc.MyvX5d.D0aEmf")
     print("Extracted Content:", element.text)
     return element.text
 
-def scrape_custom_machine_type(driver,actions):
+def compute_scrape_custom_machine_type(driver,actions):
     time.sleep(0.6)
     element = driver.find_element(By.CLASS_NAME, "HY0Uh")
     print("Extracted Content:", element.text)
     return element.text
 
-def get_memory_limit(series, ram):
+
+def compute_get_memory_limit(series, ram):
     ram_limits = {
         'N1': {
             2: 13, 4: 26, 6: 39, 8: 52, 10: 65, 12: 78, 14: 91, 16: 104, 18: 117, 20: 130,
@@ -780,15 +791,15 @@ def get_memory_limit(series, ram):
 
 
 #=============================================================================================#
-def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
+def compute_get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
     print(f"Getting on demand pricing: 🖥️ OS: {os_name}, 🔢 No. of Instances: {no_of_instances}, ⏳ Hours per Day: {hours_per_day}, "
       f"🛠️ Machine Family: {machine_family}, 📊 Series: {series}, 💻 Machine Type: {machine_type}, "
       f"⚙️ vCPU: {vCPU}, 🖥️ RAM: {ram} GB, 💾 Boot Disk Capacity: {boot_disk_capacity} GB, "
       f"🌍 Region: {region}, 🏷️ Machine Class: {machine_class}")
-    os_index = get_os_index(os_name)
-    machine_family_index = get_index(machine_family, indices)
-    series_index = get_index(series, indices)
-    machine_type_index = get_index(machine_type, indices)
+    os_index = compute_get_os_index(os_name)
+    machine_family_index = compute_get_index(machine_family, indices)
+    series_index = compute_get_index(series, indices)
+    machine_type_index = compute_get_index(machine_type, indices)
     
     print(f"os index : {os_index},machine family : {machine_family_index},series index :{series_index},machine type index : {machine_type_index}")
     print(vCPU,ram)
@@ -809,19 +820,19 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
     driver.get("https://cloud.google.com/products/calculator")
     driver.implicitly_wait(10)
     
-    home_page(driver,actions)
-    handle_instance(driver,actions,no_of_instances,hours_per_day)
-    handle_hours_per_day(driver,actions,hours_per_day)
+    compute_home_page(driver,actions)
+    compute_handle_instance(driver,actions,no_of_instances,hours_per_day)
+    compute_handle_hours_per_day(driver,actions,hours_per_day)
     #time.sleep(0.6)
-    handle_machine_class(driver,actions,machine_class)
+    compute_handle_machine_class(driver,actions,machine_class)
     
-    handle_os(driver,actions,os_index,os_name)
+    compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
-    handle_machine_family(driver,actions,machine_family_index,machine_family)
+    compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)
-    handle_series(driver,actions,series_index,series)
+    compute_handle_series(driver,actions,series_index,series)
     #time.sleep(0.6)
-    handle_machine_type(driver,actions,machine_type,machine_type_index)
+    compute_handle_machine_type(driver,actions,machine_type,machine_type_index)
     #time.sleep(0.6)
     
     if vCPU!=0:
@@ -835,37 +846,37 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
                 'E2': 16
                 }
                 
-                memory_limit = get_memory_limit(series, vCPU)
+                memory_limit = compute_get_memory_limit(series, vCPU)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 
             
         elif machine_family.lower() == "accelerator optimized" and series == "G2":
                 print(f"Calling handle_vcpu_and_memory  Machine Family: {machine_family}, Series: {series}")
                 if machine_type=='custom':
                     #extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
            
             
     else:
         print(f"Skipping handle_vcpu_and_memory: Machine Family: {machine_family}, Series: {series}, Type: {machine_type}")
     
     #time.sleep(0.6)
-    boot_disk_type(driver,actions)
+    compute_boot_disk_type(driver,actions)
     #time.sleep(0.6)
-    boot_disk_capacitys(driver,actions,boot_disk_capacity)    
+    compute_boot_disk_capacitys(driver,actions,boot_disk_capacity)    
     
     #time.sleep(0.6)
 
     
 
-    select_region(driver,actions,region)
+    compute_select_region(driver,actions,region)
     
         
         
@@ -874,11 +885,11 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
     
     current_url = driver.current_url
     
-    price=get_price_with_js(driver)
+    price=compute_get_price_with_js(driver)
     if machine_type=='custom':
-       machine_type_data= scrape_custom_machine_type(driver,actions)
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
     else:
-        machine_type_data=scrape_machine_type(driver,actions)
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     
     print(price,current_url)
     
@@ -892,16 +903,16 @@ def get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machine_famil
     
     
     
-def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
+def compute_get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
     print(f"Getting SUD pricing: 🖥️ OS: {os_name}, 🔢 No. of Instances: {no_of_instances}, ⏳ Hours per Day: {hours_per_day}, "
       f"🛠️ Machine Family: {machine_family}, 📊 Series: {series}, 💻 Machine Type: {machine_type}, "
       f"⚙️ vCPU: {vCPU}, 🖥️ RAM: {ram} GB, 💾 Boot Disk Capacity: {boot_disk_capacity} GB, "
       f"🌍 Region: {region}, 🏷️ Machine Class: {machine_class}")
 
-    os_index = get_os_index(os_name)
-    machine_family_index = get_index(machine_family, indices)
-    series_index = get_index(series, indices)
-    machine_type_index = get_index(machine_type, indices)
+    os_index = compute_get_os_index(os_name)
+    machine_family_index = compute_get_index(machine_family, indices)
+    series_index = compute_get_index(series, indices)
+    machine_type_index = compute_get_index(machine_type, indices)
     
     print(f"os index : {os_index},machine family : {machine_family_index},series index :{series_index},machine type index : {machine_type_index}")
     print(vCPU,ram)
@@ -922,20 +933,20 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
     driver.get("https://cloud.google.com/products/calculator")
     driver.implicitly_wait(10)
     
-    home_page(driver,actions)
-    handle_instance(driver,actions,no_of_instances,hours_per_day)
+    compute_home_page(driver,actions)
+    compute_handle_instance(driver,actions,no_of_instances,hours_per_day)
     #time.sleep(0.6)
-    handle_hours_per_day(driver,actions,hours_per_day)
+    compute_handle_hours_per_day(driver,actions,hours_per_day)
     #time.sleep(0.6)
-    handle_machine_class(driver,actions,machine_class)
+    compute_handle_machine_class(driver,actions,machine_class)
     
-    handle_os(driver,actions,os_index,os_name)
+    compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
-    handle_machine_family(driver,actions,machine_family_index,machine_family)
+    compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)
-    handle_series(driver,actions,series_index,series)
+    compute_handle_series(driver,actions,series_index,series)
     #time.sleep(0.6)
-    handle_machine_type(driver,actions,machine_type,machine_type_index)
+    compute_handle_machine_type(driver,actions,machine_type,machine_type_index)
     #time.sleep(0.6)
     
     if vCPU!=0:
@@ -949,38 +960,38 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
                 'E2': 16
                 }
                 
-                memory_limit = get_memory_limit(series, ram)
+                memory_limit = compute_get_memory_limit(series, ram)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 
             
         elif machine_family.lower() == "accelerator optimized" and series == "G2":
                 print(f"Calling handle_vcpu_and_memory  Machine Family: {machine_family}, Series: {series}")
                 if machine_type=='custom':
                     #extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
            
             
     else:
         print(f"Skipping handle_vcpu_and_memory: Machine Family: {machine_family}, Series: {series}, Type: {machine_type}")
     
     #time.sleep(0.6)
-    boot_disk_type(driver,actions)
+    compute_boot_disk_type(driver,actions)
     #time.sleep(0.6)
-    boot_disk_capacitys(driver,actions,boot_disk_capacity)    
+    compute_boot_disk_capacitys(driver,actions,boot_disk_capacity)    
     
     #time.sleep(2)
 
-    sud_toggle_on(driver,actions)
+    compute_sud_toggle_on(driver,actions)
     
     #time.sleep(2)
-    select_region(driver,actions,region)
+    compute_select_region(driver,actions,region)
     
         
         
@@ -989,12 +1000,12 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
     
     current_url = driver.current_url
     
-    price=get_price_with_js(driver)
+    price=compute_get_price_with_js(driver)
     
     if machine_type=='custom':
-           machine_type_data= scrape_custom_machine_type(driver,actions)
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
     else:
-        machine_type_data=scrape_machine_type(driver,actions)
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
@@ -1003,16 +1014,16 @@ def get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_family, ser
     return current_url, price, machine_type_data
     
     
-def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
+def compute_get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
     print(f"Getting one year pricing: 🖥️ OS: {os_name}, 🔢 No. of Instances: {no_of_instances}, ⏳ Hours per Day: {hours_per_day}, "
       f"🛠️ Machine Family: {machine_family}, 📊 Series: {series}, 💻 Machine Type: {machine_type}, "
       f"⚙️ vCPU: {vCPU}, 🖥️ RAM: {ram} GB, 💾 Boot Disk Capacity: {boot_disk_capacity} GB, "
       f"🌍 Region: {region}, 🏷️ Machine Class: {machine_class}")
 
-    os_index = get_os_index(os_name)
-    machine_family_index = get_index(machine_family, indices)
-    series_index = get_index(series, indices)
-    machine_type_index = get_index(machine_type, indices)
+    os_index = compute_get_os_index(os_name)
+    machine_family_index = compute_get_index(machine_family, indices)
+    series_index = compute_get_index(series, indices)
+    machine_type_index = compute_get_index(machine_type, indices)
     
     print(f"os index : {os_index},machine family : {machine_family_index},series index :{series_index},machine type index : {machine_type_index}")
     print(vCPU,ram)
@@ -1033,20 +1044,20 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
     driver.get("https://cloud.google.com/products/calculator")
     driver.implicitly_wait(10)
     
-    home_page(driver,actions)
-    handle_instance(driver,actions,no_of_instances,hours_per_day)
+    compute_home_page(driver,actions)
+    compute_handle_instance(driver,actions,no_of_instances,hours_per_day)
     #time.sleep(0.6)
-    handle_hours_per_day(driver,actions,hours_per_day)
+    compute_handle_hours_per_day(driver,actions,hours_per_day)
     #time.sleep(0.6)
-    handle_machine_class(driver,actions,machine_class)
+    compute_handle_machine_class(driver,actions,machine_class)
     
-    handle_os(driver,actions,os_index,os_name)
+    compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
-    handle_machine_family(driver,actions,machine_family_index,machine_family)
+    compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)
-    handle_series(driver,actions,series_index,series)
+    compute_handle_series(driver,actions,series_index,series)
     #time.sleep(0.6)
-    handle_machine_type(driver,actions,machine_type,machine_type_index)
+    compute_handle_machine_type(driver,actions,machine_type,machine_type_index)
     #time.sleep(0.6)
     
     if vCPU!=0:
@@ -1061,53 +1072,52 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
                 'E2': 16
                 }
                 
-                memory_limit = get_memory_limit(series, ram)
+                memory_limit = compute_get_memory_limit(series, ram)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 
             
         elif machine_family.lower() == "accelerator optimized" and series == "G2":
                 print(f"Calling handle_vcpu_and_memory  Machine Family: {machine_family}, Series: {series}")
                 if machine_type=='custom':
                     #extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
            
             
         else:
             print(f"Skipping handle_vcpu_and_memory: Machine Family: {machine_family}, Series: {series}, Type: {machine_type}")
     
     #time.sleep(0.6)
-    boot_disk_type(driver,actions)
+    compute_boot_disk_type(driver,actions)
     #time.sleep(0.6)
-    boot_disk_capacitys(driver,actions,boot_disk_capacity)    
+    compute_boot_disk_capacitys(driver,actions,boot_disk_capacity)    
     
     #time.sleep(0.6)
 
     
 
-    select_region(driver,actions,region)
+    compute_select_region(driver,actions,region)
     
     #time.sleep(0.6)
     
-    one_year_selection(driver,actions)  
+    compute_one_year_selection(driver,actions)  
         
     
     time.sleep(10)
     
     current_url = driver.current_url
     
-    price=get_price_with_js(driver)
+    price=compute_get_price_with_js(driver)
     if machine_type=='custom':
-           machine_type_data= scrape_custom_machine_type(driver,actions)
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
     else:
-      machine_type_data=scrape_machine_type(driver,actions)
-     
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
@@ -1115,16 +1125,16 @@ def get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine_family,
     
     return current_url, price , machine_type_data
 
-def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
+def  compute_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class):
     print(f"Getting three year pricing: 🖥️ OS: {os_name}, 🔢 No. of Instances: {no_of_instances}, ⏳ Hours per Day: {hours_per_day}, "
       f"🛠️ Machine Family: {machine_family}, 📊 Series: {series}, 💻 Machine Type: {machine_type}, "
       f"⚙️ vCPU: {vCPU}, 🖥️ RAM: {ram} GB, 💾 Boot Disk Capacity: {boot_disk_capacity} GB, "
       f"🌍 Region: {region}, 🏷️ Machine Class: {machine_class}")
 
-    os_index = get_os_index(os_name)
-    machine_family_index = get_index(machine_family, indices)
-    series_index = get_index(series, indices)
-    machine_type_index = get_index(machine_type, indices)
+    os_index = compute_get_os_index(os_name)
+    machine_family_index = compute_get_index(machine_family, indices)
+    series_index = compute_get_index(series, indices)
+    machine_type_index = compute_get_index(machine_type, indices)
     
     print(f"os index : {os_index},machine family : {machine_family_index},series index :{series_index},machine type index : {machine_type_index}")
     print(vCPU,ram)
@@ -1145,20 +1155,20 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
     driver.get("https://cloud.google.com/products/calculator")
     driver.implicitly_wait(10)
     
-    home_page(driver,actions)
-    handle_instance(driver,actions,no_of_instances,hours_per_day)
+    compute_home_page(driver,actions)
+    compute_handle_instance(driver,actions,no_of_instances,hours_per_day)
     #time.sleep(0.6)
-    handle_hours_per_day(driver,actions,hours_per_day)
+    compute_handle_hours_per_day(driver,actions,hours_per_day)
     
-    handle_machine_class(driver,actions,machine_class)
+    compute_handle_machine_class(driver,actions,machine_class)
     #time.sleep(0.6)
-    handle_os(driver,actions,os_index,os_name)
+    compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
-    handle_machine_family(driver,actions,machine_family_index,machine_family)
+    compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)
-    handle_series(driver,actions,series_index,series)
+    compute_handle_series(driver,actions,series_index,series)
     #time.sleep(0.6)
-    handle_machine_type(driver,actions,machine_type,machine_type_index)
+    compute_handle_machine_type(driver,actions,machine_type,machine_type_index)
     #time.sleep(0.6)
     
     if vCPU!=0:
@@ -1173,22 +1183,22 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
                 'E2': 16
                 }
                 
-                memory_limit = get_memory_limit(series, ram)
+                memory_limit = compute_get_memory_limit(series, ram)
 
                 if machine_type == 'custom' and ram > memory_limit:
-                    extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_extended_mem_toggle_on(driver,actions,vCPU)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 
             
         elif machine_family.lower() == "accelerator optimized" and series == "G2":
                 print(f"Calling handle_vcpu_and_memory  Machine Family: {machine_family}, Series: {series}")
                 if machine_type=='custom':
                     #extended_mem_toggle_on(driver,actions)
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                 else:
-                    handle_vcpu_and_memory(driver, actions, vCPU, ram)
+                    compute_handle_vcpu_and_memory(driver, actions, vCPU, ram)
                     
         else:
             print("inside the loop ")
@@ -1198,27 +1208,27 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
         print(f"Skipping handle_vcpu_and_memory: Machine Family: {machine_family}, Series: {series}, Type: {machine_type}")
     
     #time.sleep(0.6)
-    boot_disk_type(driver,actions)
+    compute_boot_disk_type(driver,actions)
     #time.sleep(0.6)
-    boot_disk_capacitys(driver,actions,boot_disk_capacity)    
-    
-    #time.sleep(0.6)
-    
-    select_region(driver,actions,region)
+    compute_boot_disk_capacitys(driver,actions,boot_disk_capacity)    
     
     #time.sleep(0.6)
     
-    three_year_selection(driver,actions)
+    compute_select_region(driver,actions,region)
+    
+    #time.sleep(0.6)
+    
+    compute_three_year_selection(driver,actions)
     
     time.sleep(10)
     
     current_url = driver.current_url
     
-    price=get_price_with_js(driver)
+    price=compute_get_price_with_js(driver)
     if machine_type=='custom':
-       machine_type_data= scrape_custom_machine_type(driver,actions)
+           machine_type_data= compute_scrape_custom_machine_type(driver,actions)
     else:
-       machine_type_data=scrape_machine_type(driver,actions)
+        machine_type_data=compute_scrape_machine_type(driver,actions)
     print(price,current_url)
     
     driver.quit()
@@ -1231,10 +1241,15 @@ def  get_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_fami
 #=============================================================================================#
 
 
-def main(sheet_url,recipient_email):
-    download_sheet(sheet_url)
-
-    process_csv(input_file, output_file_filtered)
+def compute_main(sheet_url):
+    compute_download_sheet(sheet_url)
+    df=pd.read_csv("data/sheet.csv")
+    if df.shape[0] == 0 or df.dropna(how='all').shape[0] == 0:
+        compute_sql_save_to_excel(pd.DataFrame(), "data/ComputeEngine.xlsx")  # Save an empty file
+        print("⚠ The input sheet contains only headers or is completely empty. Exiting without processing.")
+        return
+    compute_process_csv(input_file, output_file_filtered)
+    
     sheet = pd.read_csv(input_filtered_file)
     results = []
 
@@ -1302,7 +1317,7 @@ def main(sheet_url,recipient_email):
                         if series=="E2":  
                             if iteration==0:
                                 print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= get_on_demand_pricing(
+                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= compute_get_on_demand_pricing(
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
 
@@ -1318,7 +1333,7 @@ def main(sheet_url,recipient_email):
                         else:
                             if iteration==0:
                                 print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= get_on_demand_pricing(
+                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= compute_get_on_demand_pricing(
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
 
@@ -1339,7 +1354,7 @@ def main(sheet_url,recipient_email):
                         if series=="E2":
                             if iteration==0:
                                 print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= get_on_demand_pricing(
+                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= compute_get_on_demand_pricing(
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
 
@@ -1355,7 +1370,7 @@ def main(sheet_url,recipient_email):
                             
                             if iteration==0:
                                 print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                            row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = get_on_demand_pricing(
+                            row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = compute_get_on_demand_pricing(
                                 os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                             )
 
@@ -1364,7 +1379,7 @@ def main(sheet_url,recipient_email):
                                 if series=="C2D":
                             
                                     print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_on_demand_pricing(
+                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = compute_get_on_demand_pricing(
                                         os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                     )
                                     
@@ -1373,7 +1388,7 @@ def main(sheet_url,recipient_email):
                                     break
                                 else:
                                     print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_sud_pricing(
+                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = compute_get_sud_pricing(
                                         os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                     )
                                     
@@ -1387,7 +1402,7 @@ def main(sheet_url,recipient_email):
                         
                             if iteration == 0:
                                 print(f"Iteration {iteration + 1}: Getting on-demand price and link")
-                                row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = get_on_demand_pricing(
+                                row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = compute_get_on_demand_pricing(
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
                             elif iteration == 1:
@@ -1398,17 +1413,17 @@ def main(sheet_url,recipient_email):
                                 
                                 else:
                                     print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = get_sud_pricing(
+                                    row_result["SUD URL"], row_result["SUD Price"],row["Machine type"] = compute_get_sud_pricing(
                                         os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                     )
                             elif iteration == 2:
                                 print(f"Iteration {iteration + 1}: Getting 1-year commitment price and link")
-                                row_result["1-Year URL"], row_result["1-Year Price"],row["Machine type"] = get_one_year_pricing(
+                                row_result["1-Year URL"], row_result["1-Year Price"],row["Machine type"] = compute_get_one_year_pricing(
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
                             elif iteration == 3:
                                 print(f"Iteration {iteration + 1}: Getting 3-year commitment price and link")
-                                row_result["3-Year URL"], row_result["3-Year Price"] ,row["Machine type"]= get_three_year_pricing(
+                                row_result["3-Year URL"], row_result["3-Year Price"] ,row["Machine type"]= compute_three_year_pricing(
                                     os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
                                 )
                                 
@@ -1445,7 +1460,7 @@ def main(sheet_url,recipient_email):
     output_df.to_excel(output_file, index=False)
     print(f"Results saved to {output_file}")
     print("sending mail!!")
-    send_email_with_attachment(sender_email, sender_password, recipient_email, subject, body, file_path)
+    #compute_send_email_with_attachment(sender_email, sender_password, recipient_email, subject, body, file_path)
 
 
 @app.route('/calculate',methods=["POST"])
@@ -1453,7 +1468,7 @@ def run_automation():
     sheet = request.form.get('sheet')
     email = request.form.get('email')
     process_status[email] = "Processing"
-    main(sheet,email)
+    compute_main(sheet,email)
     process_status[email] = "Completed"
     return "process completed sucessfully"
 
