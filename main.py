@@ -1391,25 +1391,7 @@ def compute_main(sheet_url):
                     
                     else:
                         
-                        if series=="E2":
-                            if iteration==0:
-                                print(f"Iteration {iteration + 1}: Getting on-demand price and link (e2-micro)")
-                                row_result["On-Demand URL"], row_result["On-Demand Price"] , row["Machine type"]= compute_get_on_demand_pricing(
-                                    os_name, no_of_instances, hours_per_day, machine_family, series, machine_type, vCPU, ram, boot_disk_capacity, region,machine_class
-                                )
-
-                            if iteration==1:
-                                
-                                print(f"Iteration {iteration + 1}: Getting sustained use discount (SUD) price and link")
-                                row_result["SUD URL"], row_result["SUD Price"], row["Machine type"] = row_result["On-Demand URL"], row_result["On-Demand Price"], row["Machine type"]
-                                
-                                row_result["1-Year URL"], row_result["1-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
-                                row_result["3-Year URL"], row_result["3-Year Price"], row["Machine type"] = row_result["SUD URL"], row_result["SUD Price"], row["Machine type"]
-                                break
-                            
                         
-                        
-                        else:
                             if iteration == 0:
                                 print(f"Iteration {iteration + 1}: Getting on-demand price and link")
                                 row_result["On-Demand URL"], row_result["On-Demand Price"],row["Machine type"] = compute_get_on_demand_pricing(
