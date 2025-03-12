@@ -99,6 +99,9 @@ def compute_map_os(value, os_mapping):
     if value.lower()=="win":
         return "Paid: Windows Server"
     
+    if value.lower()=="rhel":
+        return "Paid: Red Hat Enterprise Linux"
+    
     else:
         value = value.lower().strip()  # Normalize case and remove extra spaces
 
@@ -824,9 +827,15 @@ def compute_get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machi
     compute_handle_instance(driver,actions,no_of_instances,hours_per_day)
     compute_handle_hours_per_day(driver,actions,hours_per_day)
     #time.sleep(0.6)
-    compute_handle_machine_class(driver,actions,machine_class)
+    if machine_class=="regular":
+        print("skipping machine class selection")
+    else:
+        compute_handle_machine_class(driver,actions,machine_class)
     
-    compute_handle_os(driver,actions,os_index,os_name)
+    if os_name=="Free: Debian, CentOS, CoreOS, Ubuntu or BYOL":
+        print("skipping os selection")
+    else:
+        compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
     compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)
@@ -938,9 +947,15 @@ def compute_get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_fam
     #time.sleep(0.6)
     compute_handle_hours_per_day(driver,actions,hours_per_day)
     #time.sleep(0.6)
-    compute_handle_machine_class(driver,actions,machine_class)
-    
-    compute_handle_os(driver,actions,os_index,os_name)
+    if machine_class=="regular":
+        print("skipping machine class selection")
+    else:
+        compute_handle_machine_class(driver,actions,machine_class)
+        
+    if os_name=="Free: Debian, CentOS, CoreOS, Ubuntu or BYOL":
+        print("skipping os selection")
+    else:
+        compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
     compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)
@@ -1049,9 +1064,15 @@ def compute_get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine
     #time.sleep(0.6)
     compute_handle_hours_per_day(driver,actions,hours_per_day)
     #time.sleep(0.6)
-    compute_handle_machine_class(driver,actions,machine_class)
+    if machine_class=="regular":
+        print("skipping machine class selection")
+    else:
+        compute_handle_machine_class(driver,actions,machine_class)
     
-    compute_handle_os(driver,actions,os_index,os_name)
+    if os_name=="Free: Debian, CentOS, CoreOS, Ubuntu or BYOL":
+        print("skipping os selection")
+    else:
+        compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
     compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)
@@ -1160,9 +1181,15 @@ def  compute_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_
     #time.sleep(0.6)
     compute_handle_hours_per_day(driver,actions,hours_per_day)
     
-    compute_handle_machine_class(driver,actions,machine_class)
+    if machine_class=="regular":
+        print("skipping machine class selection")
+    else:
+        compute_handle_machine_class(driver,actions,machine_class)
     #time.sleep(0.6)
-    compute_handle_os(driver,actions,os_index,os_name)
+    if os_name=="Free: Debian, CentOS, CoreOS, Ubuntu or BYOL":
+        print("skipping os selection")
+    else:
+        compute_handle_os(driver,actions,os_index,os_name)
     #time.sleep(0.6)
     compute_handle_machine_family(driver,actions,machine_family_index,machine_family)
     #time.sleep(0.6)

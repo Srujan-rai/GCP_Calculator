@@ -786,7 +786,7 @@ def main(sheet,email):
     
     results = []
     
-    for index, row in df.iterrows(  ):
+    for index, row in df.iterrows():
         # Validation checks
         error_message = []
 
