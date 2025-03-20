@@ -1,54 +1,63 @@
-# GCP Calculator
+# 🌩️ GCP Calculator
+
+<div align="center">
+
+![GCP Calculator](https://img.shields.io/badge/GCP-Calculator-blue?style=for-the-badge&logo=google-cloud)
+[![Python](https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.0-lightgrey?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 A powerful automation tool for calculating Google Cloud Platform (GCP) pricing across Compute Engine and Cloud SQL services.
 
-## Overview
+</div>
+
+## 📖 Overview
 
 The GCP Calculator is a Flask-based web application that automates the process of retrieving pricing information from Google Cloud Platform's pricing calculator. It supports both Compute Engine and Cloud SQL services, providing detailed pricing comparisons across different commitment terms.
 
-## Features
+## ✨ Features
 
-### Compute Engine Pricing
+### 🖥️ Compute Engine Pricing
 
 - Calculates pricing for:
-  - On-Demand instances
-  - Sustained Use Discount (SUD)
-  - 1-Year commitment
-  - 3-Year commitment
+  - 💰 On-Demand instances
+  - 🔄 Sustained Use Discount (SUD)
+  - 📅 1-Year commitment
+  - 📆 3-Year commitment
 - Supports various configurations:
-  - Multiple machine families
-  - Custom machine types
-  - Different OS options
-  - Various regions
-  - Storage options
-  - High availability configurations
+  - 🔧 Multiple machine families
+  - ⚙️ Custom machine types
+  - 🐧 Different OS options
+  - 🌍 Various regions
+  - 💾 Storage options
+  - 🔄 High availability configurations
 
-### Cloud SQL Pricing
+### 🗄️ Cloud SQL Pricing
 
 - Calculates pricing for:
-  - Different SQL types (MySQL, PostgreSQL, SQL Server)
-  - Enterprise and Enterprise Plus editions
-  - Various instance types
-  - High Availability configurations
-  - Storage options (SSD/HDD)
-  - Backup configurations
+  - 📊 Different SQL types (MySQL, PostgreSQL, SQL Server)
+  - 🏢 Enterprise and Enterprise Plus editions
+  - 💻 Various instance types
+  - 🔄 High Availability configurations
+  - 💽 Storage options (SSD/HDD)
+  - 📦 Backup configurations
 
-### Additional Features
+### 🎯 Additional Features
 
-- Automated Google Sheet processing
-- Result export to Excel
-- Google Drive integration
-- Email notifications
-- Multi-user sharing capabilities
+- 📊 Automated Google Sheet processing
+- 📑 Result export to Excel
+- ☁️ Google Drive integration
+- 📧 Email notifications
+- 👥 Multi-user sharing capabilities
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Python 3.x
-- Google Chrome browser
-- ChromeDriver
-- Google Cloud Platform service account credentials
+- 🐍 Python 3.x
+- 🌐 Google Chrome browser
+- 🚗 ChromeDriver
+- 🔑 Google Cloud Platform service account credentials
 
-## Required Python Packages
+## 📦 Required Python Packages
 
 ```bash
 selenium==4.16.0
@@ -69,7 +78,7 @@ urllib3==2.1.0
 PyYAML==6.0.1
 ```
 
-## Installation
+## 🚀 Installation
 
 1. Clone the repository:
 
@@ -86,26 +95,26 @@ pip install -r requirements.txt
 
 3. Set up service account:
 
-- Place your Google Cloud service account JSON file in the `assets` directory
-- Update the service account file path in the code if necessary
+- 📁 Place your Google Cloud service account JSON file in the `assets` directory
+- 🔄 Update the service account file path in the code if necessary
 
-## Project Structure
+## 📂 Project Structure
 
 ```
 GCP_Calculator/
-├── assets/
-│   ├── index.json
-│   ├── knowledge_base.json
-│   └── service-account.json
-├── data/
-│   └── (Generated files)
-├── main.py
-├── index.html
-├── requirements.txt
-└── README.md
+├── 📁 assets/
+│   ├── 📄 index.json
+│   ├── 📄 knowledge_base.json
+│   └── 🔑 service-account.json
+├── 📁 data/
+│   └── 📊 (Generated files)
+├── 📜 main.py
+├── 🌐 index.html
+├── 📋 requirements.txt
+└── 📖 README.md
 ```
 
-## Usage
+## 🎮 Usage
 
 1. Start the Flask server:
 
@@ -125,15 +134,15 @@ start index.html  # On Windows
 
 3. Using the Web Interface:
 
-- Enter the Google Sheet URL containing your configuration
-- Add email addresses for sharing results
-- Click "Calculate" to start the process
-- Wait for the process to complete and receive the results
+- 📝 Enter the Google Sheet URL containing your configuration
+- ✉️ Add email addresses for sharing results
+- 🚀 Click "Calculate" to start the process
+- ⏳ Wait for the process to complete and receive the results
 
 4. Alternative: API Usage
    Make a POST request to `/calculate` endpoint with:
-   - `sheet`: Google Sheet URL containing configuration details
-   - `emails[]`: List of email addresses for sharing results
+   - 📄 `sheet`: Google Sheet URL containing configuration details
+   - 📧 `emails[]`: List of email addresses for sharing results
 
 Example curl request:
 
@@ -144,76 +153,82 @@ curl -X POST http://localhost:5000/calculate \
   -F "emails[]=user2@example.com"
 ```
 
-## Input Sheet Format
+## 📝 Input Sheet Format
 
-### Compute Engine Tab
-
-Required columns:
-
-- OS with version
-- No. of Instances
-- Avg no. of hrs
-- Machine Family
-- Series
-- Machine Type
-- vCPUs
-- RAM
-- BootDisk Capacity
-- Datacenter Location
-- Machine Class
-
-### Cloud SQL Tab
+### 💻 Compute Engine Tab
 
 Required columns:
 
-- SQL Type
-- Datacenter Location
-- Cloud SQL Edition
-- No. of Instances
-- Avg no. of hrs
-- Instance Type
-- HA/Non-HA
-- Disk Type
-- Storage Amt
-- Backup
-- vCPUs
-- RAM
+- 🖥️ OS with version
+- 🔢 No. of Instances
+- ⏰ Avg no. of hrs
+- 🏭 Machine Family
+- 📊 Series
+- 💻 Machine Type
+- 🔄 vCPUs
+- 💾 RAM
+- 💿 BootDisk Capacity
+- 🌍 Datacenter Location
+- 🏷️ Machine Class
 
-## Output
+### 🗄️ Cloud SQL Tab
+
+Required columns:
+
+- 📊 SQL Type
+- 🌍 Datacenter Location
+- 🏢 Cloud SQL Edition
+- 🔢 No. of Instances
+- ⏰ Avg no. of hrs
+- 💻 Instance Type
+- 🔄 HA/Non-HA
+- 💽 Disk Type
+- 💾 Storage Amt
+- 📦 Backup
+- 🔄 vCPUs
+- 💾 RAM
+
+## 📤 Output
 
 The tool generates:
 
-1. Excel files with detailed pricing information
-2. Converts results to Google Sheets
-3. Shares the sheet with specified email addresses
-4. Returns the Google Sheet URL for accessing results
+1. 📊 Excel files with detailed pricing information
+2. 📑 Converts results to Google Sheets
+3. 📧 Shares the sheet with specified email addresses
+4. 🔗 Returns the Google Sheet URL for accessing results
 
-## Error Handling
+## ⚠️ Error Handling
 
-- Validates input data before processing
-- Handles missing required fields
-- Provides detailed error messages
-- Continues processing valid rows when encountering errors
+- ✅ Validates input data before processing
+- 🔍 Handles missing required fields
+- ❌ Provides detailed error messages
+- 🔄 Continues processing valid rows when encountering errors
 
-## Limitations
+## ⚡ Limitations
 
-- Requires Chrome browser and ChromeDriver
-- Depends on Google Cloud Platform's pricing calculator UI
-- Processing time increases with number of configurations
-- Rate limits may apply for Google Drive API usage
+- 🌐 Requires Chrome browser and ChromeDriver
+- 🔄 Depends on Google Cloud Platform's pricing calculator UI
+- ⏱️ Processing time increases with number of configurations
+- 📊 Rate limits may apply for Google Drive API usage
 
-## Contributing
+## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+1. 🔱 Fork the repository
+2. 🌿 Create your feature branch
+3. 💾 Commit your changes
+4. 🚀 Push to the branch
+5. 📬 Create a new Pull Request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
+## 💬 Support
 
 For support, please open an issue in the GitHub repository or contact the maintainers.
+
+---
+
+<div align="center">
+Made with ❤️ by Srujan Rai
+</div>
