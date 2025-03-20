@@ -102,7 +102,7 @@ def compute_map_os(value, os_mapping):
     if value.lower()=="rhel":
         return "Paid: Red Hat Enterprise Linux"
     
-    if value.lower()=="SLES":
+    if value.lower()=="sles":
         return "Paid: SLES"
     
     else:
