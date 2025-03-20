@@ -114,44 +114,27 @@ GCP_Calculator/
 └── 📖 README.md
 ```
 
-## 🎮 Usage
+## 🚀 Usage
 
-1. Start the Flask server:
+1. Start the application:
 
 ```bash
 python main.py
 ```
 
-2. Open the web interface:
+2. Open your web browser and navigate to:
 
-```bash
-# Open index.html in your web browser
-# You can do this by double-clicking the file or using the following command:
-open index.html  # On macOS
-xdg-open index.html  # On Linux
-start index.html  # On Windows
+```
+http://localhost:5000
 ```
 
-3. Using the Web Interface:
+The application will open with the calculator interface ready to use. You can:
 
-- 📝 Enter the Google Sheet URL containing your configuration
-- ✉️ Add email addresses for sharing results
-- 🚀 Click "Calculate" to start the process
-- ⏳ Wait for the process to complete and receive the results
+- Enter your Google Sheet URL
+- Add email addresses for sharing results
+- Click Calculate to start the process
 
-4. Alternative: API Usage
-   Make a POST request to `/calculate` endpoint with:
-   - 📄 `sheet`: Google Sheet URL containing configuration details
-   - 📧 `emails[]`: List of email addresses for sharing results
-
-Example curl request:
-
-```bash
-curl -X POST http://localhost:5000/calculate \
-  -F "sheet=https://docs.google.com/spreadsheets/d/your-sheet-id" \
-  -F "emails[]=user1@example.com" \
-  -F "emails[]=user2@example.com"
-```
+The results will be displayed directly in the interface and shared via email with the specified recipients.
 
 ## 📝 Input Sheet Format
 
@@ -210,6 +193,50 @@ The tool generates:
 - 🔄 Depends on Google Cloud Platform's pricing calculator UI
 - ⏱️ Processing time increases with number of configurations
 - 📊 Rate limits may apply for Google Drive API usage
+
+## 📝 TODO
+
+### Vertical Processing Optimization
+
+- 🚀 Implement parallel processing for multiple instances
+- ⚡ Add batch processing for similar configurations
+- 🔄 Optimize database queries for vertical scaling
+- 📊 Implement queue-based task processing
+- 🎯 Add load balancing for multiple requests
+- 💾 Implement caching for repeated calculations
+- 🔍 Optimize memory usage during processing
+- 📈 Add performance monitoring and metrics
+
+### Speed Improvements
+
+- ⚡ Reduce browser automation overhead
+- 🔄 Implement asynchronous processing
+- 💨 Optimize Selenium operations
+- 🚀 Add request pooling for concurrent processing
+- ⌛ Reduce API call latency
+- 🔧 Optimize data structure usage
+- 📊 Implement efficient data caching
+- 🎯 Add smart request batching
+
+### Core Improvements
+
+- 🔐 Implement user authentication system
+- 🌐 Add support for multiple browsers
+- 📊 Add interactive pricing charts
+- 📱 Add responsive design for mobile
+- 🔒 Enhance security features
+- 📦 Create Docker container
+- 🤖 Add CI/CD pipeline
+- 📚 Add API documentation
+
+### Documentation
+
+- 📖 Add performance tuning guide
+- 🎥 Create optimization tutorials
+- 📝 Document scaling strategies
+- 🔧 Add benchmarking guide
+- 📊 Add performance metrics guide
+- 💡 Document best practices for large-scale usage
 
 ## 🤝 Contributing
 
