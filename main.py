@@ -102,6 +102,9 @@ def compute_map_os(value, os_mapping):
     if value.lower()=="rhel":
         return "Paid: Red Hat Enterprise Linux"
     
+    if value.lower()=="SLES":
+        return "Paid: SLES"
+    
     else:
         value = value.lower().strip()  # Normalize case and remove extra spaces
 
@@ -890,7 +893,7 @@ def compute_get_on_demand_pricing( os_name, no_of_instances,hours_per_day, machi
         
         
     
-    time.sleep(10)
+    time.sleep(5)
     
     current_url = driver.current_url
     
@@ -1001,17 +1004,17 @@ def compute_get_sud_pricing( os_name, no_of_instances,hours_per_day, machine_fam
     #time.sleep(0.6)
     compute_boot_disk_capacitys(driver,actions,boot_disk_capacity)    
     
-    #time.sleep(2)
+    
 
     compute_sud_toggle_on(driver,actions)
     
-    #time.sleep(2)
+    
     compute_select_region(driver,actions,region)
     
         
         
     
-    time.sleep(10)
+    time.sleep(5)
     
     current_url = driver.current_url
     
@@ -1130,7 +1133,7 @@ def compute_get_one_year_pricing(os_name, no_of_instances,hours_per_day, machine
     compute_one_year_selection(driver,actions)  
         
     
-    time.sleep(10)
+    time.sleep(5)
     
     current_url = driver.current_url
     
@@ -1247,7 +1250,7 @@ def  compute_three_year_pricing(os_name, no_of_instances,hours_per_day, machine_
     
     compute_three_year_selection(driver,actions)
     
-    time.sleep(10)
+    time.sleep(5)
     
     current_url = driver.current_url
     
@@ -1469,7 +1472,7 @@ def compute_main(sheet_url):
                         row_result["3-Year URL"] = "Error"
                         row_result["3-Year Price"] = "Error"
                 finally:
-                    time.sleep(2)
+                    time.sleep(0.2)
 
             results.append(row_result)
         
@@ -2079,10 +2082,11 @@ def cloud_sql_sud_pricing(driver,actions,service_type_value,region,cloud_sql_edi
         cloud_sql_handle_storage_type(driver,actions) 
     
     cloud_sql_backup_size(driver,actions,backup_size_value)
-    #time.sleep(10)
+    
+    time.sleep(5)
     
     current_url = driver.current_url
-    time.sleep(10)
+    
 
     price=cloud_sql_get_price_with_js(driver)
     
@@ -2134,7 +2138,7 @@ def cloud_sql_one_year_pricing(driver,actions,service_type_value,region,cloud_sq
     time.sleep(0.4)
     actions.send_keys(Keys.ENTER).perform()
     current_url = driver.current_url
-    time.sleep(10)
+    time.sleep(5)
 
     price=cloud_sql_get_price_with_js(driver)
     
@@ -2153,7 +2157,7 @@ def cloud_sql_three_year_pricing(driver,actions,service_type_value,region,cloud_
     cloud_sql_usage_time(driver,actions,usage_time_value)
     time.sleep(0.3)
     cloud_sql_select_sql_instance_type(driver,actions,instance_type)
-    time.sleep(5)
+    time.sleep(2)
     if instance_type.lower()!= "f1-micro" or instance_type.lower()!= "g1-small":
         cloud_sql_vcpu_handle(driver,actions,vcpu,ram)
     if HA.upper()=="HA":
@@ -2190,7 +2194,7 @@ def cloud_sql_three_year_pricing(driver,actions,service_type_value,region,cloud_
     time.sleep(0.4)
     actions.send_keys(Keys.ENTER).perform()
     current_url = driver.current_url
-    time.sleep(10)
+    time.sleep(5)
     price=cloud_sql_get_price_with_js(driver)
     
     print(price,current_url)
