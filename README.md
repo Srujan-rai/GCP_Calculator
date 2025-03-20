@@ -51,12 +51,22 @@ The GCP Calculator is a Flask-based web application that automates the process o
 ## Required Python Packages
 
 ```bash
-selenium==4.x.x
-pandas==1.x.x
-Flask==2.x.x
-beautifulsoup4==4.x.x
-google-api-python-client==2.x.x
-pyautogui==0.x.x
+selenium==4.16.0
+pandas==2.1.4
+Flask==3.0.0
+beautifulsoup4==4.12.2
+google-api-python-client==2.108.0
+pyautogui==0.9.54
+requests==2.31.0
+pyperclip==1.8.2
+openpyxl==3.1.2
+google-auth==2.23.4
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
+python-dotenv==1.0.0
+Werkzeug==3.0.1
+urllib3==2.1.0
+PyYAML==6.0.1
 ```
 
 ## Installation
