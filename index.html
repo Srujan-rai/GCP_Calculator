@@ -244,6 +244,15 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
       }
 
+      .footer {
+        text-align: center;
+        padding: 2rem;
+        background: var(--white);
+        border-top: 1px solid var(--border-color);
+        color: var(--accent-color);
+        font-size: 0.9rem;
+      }
+
       .loading-overlay {
         position: fixed;
         top: 0;
@@ -264,84 +273,23 @@
         padding: 2.5rem;
         border-radius: 20px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        animation: scaleIn 0.3s ease-out;
         min-width: 400px;
       }
 
-      .progress-container {
-        margin-top: 2rem;
-        text-align: left;
-      }
-
-      .progress-section {
-        margin-bottom: 1.5rem;
-        padding: 1rem;
-        border-radius: 12px;
-        background: var(--light-gray);
-      }
-
-      .progress-section h5 {
+      .loading-content h4 {
         color: var(--primary-color);
-        margin-bottom: 0.75rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        margin-bottom: 1rem;
       }
 
-      .progress-section h5 i {
-        font-size: 1.2rem;
-      }
-
-      .progress-bar {
-        width: 100%;
-        height: 8px;
-        background: var(--border-color);
-        border-radius: 4px;
-        overflow: hidden;
-        margin-bottom: 0.5rem;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background: var(--primary-color);
-        width: 0%;
-        transition: width 0.3s ease;
-      }
-
-      .progress-text {
-        font-size: 0.9rem;
-        color: var(--accent-color);
-        margin-top: 0.25rem;
-      }
-
-      .current-row {
-        font-size: 0.9rem;
+      .loading-content p {
         color: var(--secondary-color);
-        margin-top: 0.5rem;
-        font-weight: 500;
+        font-size: 1.1rem;
       }
 
-      .status-icon {
-        margin-right: 0.5rem;
-        color: var(--success-color);
-      }
-
-      .status-icon.pending {
-        color: var(--accent-color);
-      }
-
-      .status-icon.completed {
-        color: var(--success-color);
-      }
-
-      .footer {
-        text-align: center;
-        padding: 2rem;
-        background: var(--white);
-        border-top: 1px solid var(--border-color);
-        color: var(--accent-color);
-        font-size: 0.9rem;
+      .spinner-border {
+        width: 3.5rem;
+        height: 3.5rem;
+        margin-bottom: 1rem;
       }
 
       @keyframes fadeIn {
@@ -352,17 +300,6 @@
         to {
           opacity: 1;
           transform: translateY(0);
-        }
-      }
-
-      @keyframes scaleIn {
-        from {
-          opacity: 0;
-          transform: scale(0.9);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
         }
       }
 
@@ -404,7 +341,7 @@
       <div class="navbar-content">
         <div class="logo-container">
           <img
-            src="https://niveussolutions.com/wp-content/uploads/2023/05/niveus-logo.png"
+            src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
             alt="Niveus Solutions Logo"
           />
         </div>
@@ -453,47 +390,17 @@
     </main>
 
     <footer class="footer">
-      <p>© 2024 Niveus Solutions. All rights reserved.</p>
+      <p>© 2025 Niveus Solutions. All rights reserved.</p>
     </footer>
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="loading-content">
-        <div
-          class="spinner-border text-primary"
-          role="status"
-          style="width: 3.5rem; height: 3.5rem"
-        >
+        <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
         <h4>Processing Sheets</h4>
-        <p>This may take a few minutes</p>
-
-        <div class="progress-container">
-          <div class="progress-section">
-            <h5><i class="fas fa-server"></i> Compute Engine Processing</h5>
-            <div class="progress-bar">
-              <div class="progress-fill" id="computeProgress"></div>
-            </div>
-            <div class="progress-text" id="computeProgressText">
-              0% Complete
-            </div>
-            <div class="current-row" id="computeCurrentRow">
-              Waiting to start...
-            </div>
-          </div>
-
-          <div class="progress-section">
-            <h5><i class="fas fa-database"></i> Cloud SQL Processing</h5>
-            <div class="progress-bar">
-              <div class="progress-fill" id="sqlProgress"></div>
-            </div>
-            <div class="progress-text" id="sqlProgressText">0% Complete</div>
-            <div class="current-row" id="sqlCurrentRow">
-              Waiting to start...
-            </div>
-          </div>
-        </div>
+        <p id="processingStatus">Starting process...</p>
       </div>
     </div>
 
@@ -517,49 +424,17 @@
         button.parentElement.remove();
       }
 
-      // Function to update progress
-      function updateProgress(type, current, total, rowInfo) {
-        const progress = (current / total) * 100;
-        const progressBar = document.getElementById(`${type}Progress`);
-        const progressText = document.getElementById(`${type}ProgressText`);
-        const currentRow = document.getElementById(`${type}CurrentRow`);
-
-        progressBar.style.width = `${progress}%`;
-        progressText.textContent = `${Math.round(progress)}% Complete`;
-        currentRow.textContent = rowInfo;
-      }
-
       // Show loading overlay on form submit
       document
         .querySelector("form")
         .addEventListener("submit", async function (e) {
           e.preventDefault();
           document.getElementById("loadingOverlay").style.display = "flex";
+          document.getElementById("processingStatus").textContent =
+            "Starting process...";
 
           // Create FormData object
           const formData = new FormData(this);
-
-          // Start SSE connection for progress updates
-          const eventSource = new EventSource("http://127.0.0.1:5000/progress");
-
-          eventSource.onmessage = function (event) {
-            const data = JSON.parse(event.data);
-            if (data.type === "compute") {
-              updateProgress("compute", data.current, data.total, data.rowInfo);
-            } else if (data.type === "sql") {
-              updateProgress("sql", data.current, data.total, data.rowInfo);
-            } else if (data.type === "complete") {
-              eventSource.close();
-              // Redirect to the result page or show success message
-              window.location.href = data.sheet_url;
-            }
-          };
-
-          eventSource.onerror = function (error) {
-            console.error("EventSource failed:", error);
-            eventSource.close();
-            alert("Error receiving progress updates. Please try again.");
-          };
 
           try {
             // Send the form data
@@ -572,8 +447,25 @@
               throw new Error("Network response was not ok");
             }
 
-            const result = await response.text();
-            console.log("Calculation completed:", result);
+            // Create EventSource for status updates
+            const eventSource = new EventSource("http://127.0.0.1:5000/status");
+
+            eventSource.onmessage = function (event) {
+              const data = JSON.parse(event.data);
+              document.getElementById("processingStatus").textContent =
+                data.status;
+
+              if (data.completed) {
+                eventSource.close();
+                window.location.href = data.sheet_url;
+              }
+            };
+
+            eventSource.onerror = function (error) {
+              console.error("EventSource failed:", error);
+              eventSource.close();
+              alert("Error receiving status updates. Please try again.");
+            };
           } catch (error) {
             console.error("Error:", error);
             alert("An error occurred. Please try again.");
