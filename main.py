@@ -1324,8 +1324,6 @@ def compute_main(sheet_url):
 
             row_result = {
                 "Row Index": index + 1,
-                "OS with version": os_name,
-                "No. of Instances": no_of_instances,
                 "Machine Family": machine_family,
                 "Machine type":machine_type,
                 "On-Demand URL": None,
@@ -2615,9 +2613,9 @@ def run_automation():
     google_sheet_url = upload_xlsx_to_google_drive(emails, service_account_file, merged_file)
     print(google_sheet_url)
     print("all process completed sucessfully")
-    #os.remove("data/ComputeEngine.xlsx")
-    #os.remove("data/CloudSQL.xlsx")
-    #os.remove(merged_file)
+    os.remove("data/ComputeEngine.xlsx")
+    os.remove("data/CloudSQL.xlsx")
+    os.remove(merged_file)
     
         
     return f"process completed sucessfully,google sheet url {google_sheet_url}"
