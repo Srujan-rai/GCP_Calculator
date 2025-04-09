@@ -303,7 +303,7 @@ def compute_handle_instance(driver,actions,no_of_instance,hours_per_day):
     for _ in range(3):
         actions.send_keys(Keys.TAB).perform()
         time.sleep(0.2)
-    if hours_status==True:
+    if hours_status==True:  
         no_of_instance=int(no_of_instance)
         print(no_of_instance)
         #pyautogui.write(formatted_number, interval=0.8)  # Adds a slight delay for accuracy
